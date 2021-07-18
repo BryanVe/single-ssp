@@ -4,13 +4,13 @@ import java.util.Random;
 
 public class GraphMatrix {
 
-    final int MAX_LIMIT = 10;
+    final int MAX_LIMIT = 20;
     int vertex;
     int[][] matrix;
     Random random = new Random();
 
     public GraphMatrix() {
-        this.vertex = random.nextInt(MAX_LIMIT) + 1;
+        this.vertex = random.nextInt(MAX_LIMIT) + 3;
         matrix = new int[vertex][vertex];
     }
 
@@ -23,7 +23,7 @@ public class GraphMatrix {
 
         graph.printGraph();
 
-        graph.dijkstra(graph.matrix, 0);
+        System.out.println(graph.dijkstra(graph.matrix,0));
     }
 
     public void addEdge(int source, int destination, int weight) {
@@ -40,15 +40,6 @@ public class GraphMatrix {
             }
             System.out.println();
         }
-/*        for (int i = 0; i < vertex; i++) {
-            System.out.print("Vertex " + i + " is connected to:");
-             for (int j = 0; j <vertex ; j++) {
-               if(matrix[i][j]==1){
-                     System.out.print(j + " ");
-                 }
-            }
-             System.out.println();
-        } */
     }
 
     public void randomGraph() {
@@ -91,10 +82,13 @@ public class GraphMatrix {
         }
     }
 
-    public void printSolution(int[] dist) {
-        System.out.println("Vertex \t\t Distance from Source");
+    public String printSolution(int dist[]) {
+        StringBuilder str = new StringBuilder();
+        str.append("Vertex \t\t Distance from Source\n");
         for (int i = 0; i < this.vertex; i++)
-            System.out.println(i + " \t\t " + dist[i]);
+            str.append(i + "   \t\t " + dist[i]+ "\n");
+
+        return str.toString();
     }
 
     public int minDistance(int[] dist, Boolean[] sptSet) {
@@ -110,9 +104,10 @@ public class GraphMatrix {
         return min_index;
     }
 
-    public void dijkstra(int[][] graph, int src) {
-        int[] dist = new int[this.vertex];
-        Boolean[] sptSet = new Boolean[this.vertex];
+
+    public String dijkstra(int graph[][], int src) {
+        int dist[] = new int[this.vertex];
+        Boolean sptSet[] = new Boolean[this.vertex];
 
         for (int i = 0; i < this.vertex; i++) {
             dist[i] = Integer.MAX_VALUE;
@@ -131,6 +126,6 @@ public class GraphMatrix {
                     dist[v] = dist[u] + graph[u][v];
         }
 
-        printSolution(dist);
+        return printSolution(dist);
     }
 }
