@@ -69,6 +69,7 @@ public class GraphMatrix {
         String [] x = msg.split("\\r?\\n");
         int v = Integer.parseInt(x[0]);
         this.vertex = v;
+        this.matrix = new int[this.vertex][this.vertex];
         for (int i = 1 ; i<x.length ; i++) {
             String[] items = x[i].split(" ");
             for (int j = 0; j < items.length; j++) {
@@ -98,7 +99,6 @@ public class GraphMatrix {
 
     public void dijkstra(int graph[][], int src) {
         int dist[] = new int[this.vertex];
-
         Boolean sptSet[] = new Boolean[this.vertex];
 
         for (int i = 0; i < this.vertex; i++) {
