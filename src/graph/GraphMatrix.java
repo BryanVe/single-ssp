@@ -4,10 +4,9 @@ import java.util.Random;
 
 public class GraphMatrix {
 
-    int vertex;
-    int matrix[][];
-
     final int MAX_LIMIT = 10;
+    int vertex;
+    int[][] matrix;
     Random random = new Random();
 
     public GraphMatrix() {
@@ -15,8 +14,20 @@ public class GraphMatrix {
         matrix = new int[vertex][vertex];
     }
 
+    public static void main(String[] args) {
+        GraphMatrix graph = new GraphMatrix();
+        graph.randomGraph();
+        graph.printGraph();
+        System.out.println(graph.getMsg());
+        graph.readMatrix(graph.getMsg());
+
+        graph.printGraph();
+
+        graph.dijkstra(graph.matrix, 0);
+    }
+
     public void addEdge(int source, int destination, int weight) {
-        matrix[source][destination]=weight;
+        matrix[source][destination] = weight;
 
         matrix[destination][source] = weight;
     }
@@ -24,8 +35,8 @@ public class GraphMatrix {
     public void printGraph() {
         System.out.println("Graph: (Adjacency Matrix)");
         for (int i = 0; i < vertex; i++) {
-            for (int j = 0; j <vertex ; j++) {
-                System.out.print(matrix[i][j]+ " ");
+            for (int j = 0; j < vertex; j++) {
+                System.out.print(matrix[i][j] + " ");
             }
             System.out.println();
         }
@@ -42,49 +53,51 @@ public class GraphMatrix {
 
     public void randomGraph() {
         System.out.println(this.vertex);
-        int num_edges = random.nextInt(this.vertex* (this.vertex-1));
-        for (int i = 0 ; i<num_edges;i++){
+        int num_edges = random.nextInt(this.vertex * (this.vertex - 1));
+        for (int i = 0; i < num_edges; i++) {
             int x = random.nextInt(this.vertex);
             int y = random.nextInt(this.vertex);
             int w = random.nextInt((60 - 1) + 1) + 1;
-            if(matrix[x][y]==0  && x!=y){
-                addEdge(x,y,w);
+            if (matrix[x][y] == 0 && x != y) {
+                addEdge(x, y, w);
             } else {
                 continue;
             }
         }
     }
+
     public String getMsg() {
         StringBuilder str = new StringBuilder();
         str.append(this.vertex + "\n");
-        for (int i=0 ; i<this.vertex; i++) {
-            for (int j=0;j<this.vertex;j++){
-                str.append(matrix[i][j]+ " ");
+        for (int i = 0; i < this.vertex; i++) {
+            for (int j = 0; j < this.vertex; j++) {
+                str.append(matrix[i][j] + " ");
             }
             str.append("\n");
         }
-        return  str.toString();
+        return str.toString();
     }
+
     public void readMatrix(String msg) {
-        String [] x = msg.split("\\r?\\n");
+        String[] x = msg.split("\\r?\\n");
         int v = Integer.parseInt(x[0]);
         this.vertex = v;
         this.matrix = new int[this.vertex][this.vertex];
-        for (int i = 1 ; i<x.length ; i++) {
+        for (int i = 1; i < x.length; i++) {
             String[] items = x[i].split(" ");
             for (int j = 0; j < items.length; j++) {
-                matrix[i-1][j] = Integer.parseInt(items[j]);
+                matrix[i - 1][j] = Integer.parseInt(items[j]);
             }
         }
     }
 
-    public void printSolution(int dist[]) {
+    public void printSolution(int[] dist) {
         System.out.println("Vertex \t\t Distance from Source");
         for (int i = 0; i < this.vertex; i++)
             System.out.println(i + " \t\t " + dist[i]);
     }
 
-    public  int minDistance(int dist[], Boolean sptSet[]) {
+    public int minDistance(int[] dist, Boolean[] sptSet) {
 
         int min = Integer.MAX_VALUE, min_index = -1;
 
@@ -97,9 +110,9 @@ public class GraphMatrix {
         return min_index;
     }
 
-    public void dijkstra(int graph[][], int src) {
-        int dist[] = new int[this.vertex];
-        Boolean sptSet[] = new Boolean[this.vertex];
+    public void dijkstra(int[][] graph, int src) {
+        int[] dist = new int[this.vertex];
+        Boolean[] sptSet = new Boolean[this.vertex];
 
         for (int i = 0; i < this.vertex; i++) {
             dist[i] = Integer.MAX_VALUE;
@@ -119,23 +132,5 @@ public class GraphMatrix {
         }
 
         printSolution(dist);
-    }
-
-    @Override
-    public String toString() {
-        return "GraphMatrix{}";
-    }
-
-
-    public static void main(String[] args) {
-        GraphMatrix graph = new GraphMatrix();
-        graph.randomGraph();
-        graph.printGraph();
-        System.out.println(graph.getMsg());
-        graph.readMatrix(graph.getMsg());
-
-        graph.printGraph();
-
-        graph.dijkstra(graph.matrix,0);
     }
 }
