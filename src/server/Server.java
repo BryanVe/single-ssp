@@ -1,5 +1,7 @@
 package server;
 
+import graph.GraphMatrix;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -9,6 +11,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -16,6 +19,7 @@ public class Server {
     private final int port;
     private final InetSocketAddress listenAddress;
     private Selector selector;
+    private ArrayList<GraphMatrix> graphs = new ArrayList<>();
 
     public Server(String address, int port) throws IOException {
         this.port = port;
@@ -109,7 +113,15 @@ public class Server {
 
         byte[] data = new byte[numRead];
         System.arraycopy(buffer.array(), 0, data, 0, numRead);
-        System.out.println("Received message: " + new String(data));
+
+        String receivedMessage = new String(data);
+        System.out.println("Received message:");
+        System.out.println(receivedMessage);
+
+        GraphMatrix graphMatrix = new GraphMatrix();
+        graphMatrix.readMatrix(receivedMessage);
+        graphs.add(graphMatrix);
+
         buffer.clear();
 
         channel.register(selector, SelectionKey.OP_WRITE);
@@ -120,17 +132,21 @@ public class Server {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
 
         // envío de respuesta
-        String message = "mensaje del servidor al cliente";
-        buffer.put(message.getBytes());
+        GraphMatrix graphMatrix = graphs.get(0);
+        String sentMessage = graphMatrix.dijkstra(0);
+
+        // String message = "mensaje del servidor al cliente";
+        buffer.put(sentMessage.getBytes());
         buffer.flip();
         channel.write(buffer);
-        System.out.printf("Sent message: %s\n", message);
+        System.out.printf("Sent message: %s\n", sentMessage);
         buffer.clear();
 
         // cerramos el canal
         Socket socket = channel.socket();
         SocketAddress remoteAddr = socket.getRemoteSocketAddress();
         System.out.println("Connection closed by client: " + remoteAddr);
+        graphs.remove(0);
         channel.close();
         key.cancel();
     }

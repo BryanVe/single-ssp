@@ -1,5 +1,7 @@
 package client;
 
+import graph.GraphMatrix;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -19,8 +21,19 @@ public class Client {
 
         };
 
-        new Thread(client, "client-A").start();
-        new Thread(client, "client-B").start();
+        long startTime = System.nanoTime();
+        new Thread(client, "client-1").start();
+        new Thread(client, "client-2").start();
+        new Thread(client, "client-3").start();
+        new Thread(client, "client-4").start();
+        new Thread(client, "client-5").start();
+        new Thread(client, "client-6").start();
+        new Thread(client, "client-7").start();
+        new Thread(client, "client-8").start();
+        long endTime = System.nanoTime();
+
+        double duration = (double) (endTime - startTime) / 1000000;
+        System.out.printf("Time execution: %.2f\n", duration);
     }
 
     public void startClient(String address, int port) throws IOException, InterruptedException {
@@ -39,14 +52,19 @@ public class Client {
 
     // Send messages to server
     private void write(SocketChannel client) throws IOException {
-        String sentMessage = "mensaje del cliente al servidor";
+        GraphMatrix graphMatrix = new GraphMatrix();
+        graphMatrix.randomGraph();
+
+        // String sentMessage = "mensaje del cliente al servidor";
+        String sentMessage = graphMatrix.getMsg();
 
         ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
         writeBuffer.put(sentMessage.getBytes());
         writeBuffer.flip();
         client.write(writeBuffer);
 
-        System.out.printf("Sent message: %s\n", sentMessage);
+        System.out.println("Sending message:");
+        System.out.println(sentMessage);
         writeBuffer.clear();
     }
 
@@ -58,7 +76,8 @@ public class Client {
         byte[] data = new byte[numRead];
         System.arraycopy(readBuffer.array(), 0, data, 0, numRead);
         
-        System.out.printf("Received message: %s\n", new String(data));
+        System.out.println("Received message:");
+        System.out.println(new String(data));
         readBuffer.clear();
     }
 }

@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class GraphMatrix {
 
-    final int MAX_LIMIT = 20;
+    final int MAX_LIMIT = 7;
     int vertex;
     int[][] matrix;
     Random random = new Random();
@@ -18,17 +18,13 @@ public class GraphMatrix {
         GraphMatrix graph = new GraphMatrix();
         graph.randomGraph();
         graph.printGraph();
-        System.out.println(graph.getMsg());
-        graph.readMatrix(graph.getMsg());
-
-        graph.printGraph();
-
-        System.out.println(graph.dijkstra(graph.matrix,0));
+//        System.out.println(graph.getMsg());
+//        graph.readMatrix(graph.getMsg());
+//        System.out.println(graph.dijkstra(graph.matrix,0));
     }
 
     public void addEdge(int source, int destination, int weight) {
         matrix[source][destination] = weight;
-
         matrix[destination][source] = weight;
     }
 
@@ -36,23 +32,20 @@ public class GraphMatrix {
         System.out.println("Graph: (Adjacency Matrix)");
         for (int i = 0; i < vertex; i++) {
             for (int j = 0; j < vertex; j++) {
-                System.out.print(matrix[i][j] + " ");
+                System.out.print(matrix[i][j] + "\t");
             }
             System.out.println();
         }
     }
 
     public void randomGraph() {
-        System.out.println(this.vertex);
         int num_edges = random.nextInt(this.vertex * (this.vertex - 1));
         for (int i = 0; i < num_edges; i++) {
             int x = random.nextInt(this.vertex);
             int y = random.nextInt(this.vertex);
-            int w = random.nextInt((60 - 1) + 1) + 1;
-            if (matrix[x][y] == 0 && x != y) {
+            int w = random.nextInt(60) + 1;
+            if (x != y && matrix[x][y] == 0) {
                 addEdge(x, y, w);
-            } else {
-                continue;
             }
         }
     }
@@ -70,7 +63,7 @@ public class GraphMatrix {
     }
 
     public void readMatrix(String msg) {
-        String[] x = msg.split("\\r?\\n");
+        String[] x = msg.split("\n");
         int v = Integer.parseInt(x[0]);
         this.vertex = v;
         this.matrix = new int[this.vertex][this.vertex];
@@ -105,7 +98,7 @@ public class GraphMatrix {
     }
 
 
-    public String dijkstra(int graph[][], int src) {
+    public String dijkstra(int src) {
         int dist[] = new int[this.vertex];
         Boolean sptSet[] = new Boolean[this.vertex];
 
@@ -122,8 +115,8 @@ public class GraphMatrix {
             sptSet[u] = true;
 
             for (int v = 0; v < this.vertex; v++)
-                if (!sptSet[v] && graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + graph[u][v] < dist[v])
-                    dist[v] = dist[u] + graph[u][v];
+                if (!sptSet[v] && matrix[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + matrix[u][v] < dist[v])
+                    dist[v] = dist[u] + matrix[u][v];
         }
 
         return printSolution(dist);
